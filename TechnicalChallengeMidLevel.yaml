@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Bear api
+  version: 1.0.0
+  description: Hi, this is your technical challenge for you application at Atlantic Ventures. Your task is a minimal NestJS application in Typescript with that exposes the endpoints defined in this file. The expectation is that this application has a PostgreSQL database that it uses via TypeORM. The entities bear and color should have a many to many relation. Beside a runnable application we appreciate seeing things like tests, error handling, containerization, logging etc.
+  
+paths:
+  /bears:
+    get:
+      tags: 
+        - Bears
+      summary: returns list of bears
+      responses:
+        '200':
+          description: A json array of bears
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bears'
+    post:
+      tags:
+        - Bears
+      summary: create a new bear
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createBearDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bear'
+    put:
+      tags:
+        - Bears
+      summary: Modifies a bear. Allows you to add a color to it.
+      requestBody:
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/bear'
+      responses:
+        '204':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bear'
+  /bears/{bearId}:
+    delete:
+      tags:
+        - Bears
+      summary: Deletes a bear with the given id
+      parameters:
+        - name: bearId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Successfully deleted
+  /bears/{minimumSize}/{maximumSize}:
+    get:
+      tags: 
+        - Bears
+      parameters:
+        - name: minimumSize
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: maximumSize
+          in: path
+          required: true
+          schema:
+            type: integer
+      summary: returns list of bears whos size is within the given boundaries
+      responses:
+        '200':
+          description: A json array of bears
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bears'
+  /bears/{color}:
+    get:
+      tags: 
+        - Bears
+      parameters:
+        - name: color
+          in: path
+          required: true
+          schema:
+            type: integer
+      summary: returns list of bears whos list of colors include the one given as a parameter
+      responses:
+        '200':
+          description: A json array of bears
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bears'
+                
+  /colors:
+    get:
+      tags:
+        - Colors
+      summary: Returns all colors
+      responses:
+        '200':
+          description: A json array of colors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/colors'
+    post:
+      tags:
+        - Colors
+      summary: create a new color
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createColorDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/color'
+              
+  
+components:
+  schemas:
+    color:
+      type: object
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+          example: color name
+    colors:
+      type: array
+      items:
+        $ref: '#/components/schemas/color'
+    createColorDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: color name
+    bear:
+      type: object
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+          example: bear name
+        size:
+          type: integer
+          example: 10
+        colors:
+          type: array
+          items:
+            $ref: '#/components/schemas/color'
+    createBearDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: bear name
+        size:
+          type: integer
+          example: 10
+    bears:
+      type: array
+      items:
+        $ref: '#/components/schemas/bear'
