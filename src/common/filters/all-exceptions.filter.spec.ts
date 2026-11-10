@@ -30,7 +30,7 @@ describe('AllExceptionsFilter', () => {
 
   afterEach(() => jest.restoreAllMocks());
 
-  it('returns HTTP exceptions unchanged', () => {
+  it('returns HTTP exceptions with their status and message', () => {
     filter.catch(new NotFoundException('Bear 1 not found'), host);
 
     expect(response.status).toHaveBeenCalledWith(404);
@@ -40,6 +40,13 @@ describe('AllExceptionsFilter', () => {
       message: 'Bear 1 not found',
     });
     expect(errorLog).not.toHaveBeenCalled();
+  });
+
+  it('puts the status code first in the error body', () => {
+    filter.catch(new NotFoundException('Bear 1 not found'), host);
+
+    const [[body]] = response.json.mock.calls as [[object]];
+    expect(Object.keys(body)).toEqual(['statusCode', 'error', 'message']);
   });
 
   it('keeps validation messages of a 400', () => {

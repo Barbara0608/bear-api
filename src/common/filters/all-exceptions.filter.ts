@@ -23,7 +23,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     if (exception instanceof HttpException) {
-      response.status(exception.getStatus()).json(exception.getResponse());
+      const status = exception.getStatus();
+      const body = exception.getResponse();
+      const fields = (
+        typeof body === 'string' ? { message: body } : body
+      ) as Record<string, unknown>;
+
+      // Same fields as the NestJS default, ordered with the status code first.
+      response.status(status).json({
+        statusCode: status,
+        error: fields.error,
+        message: fields.message,
+        ...fields,
+      });
       return;
     }
 
