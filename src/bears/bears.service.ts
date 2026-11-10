@@ -39,7 +39,10 @@ export class BearsService {
     });
   }
 
-  /** Bears that have the given color, returned with all of their colors. */
+  /**
+   * Bears that have the given color, returned with all of their colors.
+   * Color names are stored in lowercase, so the search is case-insensitive.
+   */
   findByColor(colorName: string): Promise<Bear[]> {
     return this.bearsRepository
       .createQueryBuilder('bear')
@@ -54,7 +57,7 @@ export class BearsService {
           .getQuery();
         return `bear.id IN ${bearsWithColor}`;
       })
-      .setParameter('colorName', colorName)
+      .setParameter('colorName', colorName.toLowerCase())
       .orderBy('bear.name', 'ASC')
       .getMany();
   }

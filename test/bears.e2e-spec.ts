@@ -235,6 +235,14 @@ describe('Bears (e2e)', () => {
       expect(colorNames(bears[0])).toEqual(['black', 'brown']);
     });
 
+    it('ignores the case of the color name', async () => {
+      const brown = await createColor('brown');
+      await createBear('Baloo', 10, [brown]);
+
+      const res = await http().get('/bears/Brown').expect(200);
+      expect(names(res.body as BearBody[])).toEqual(['Baloo']);
+    });
+
     it('returns an empty list for an unknown color', () => {
       return http().get('/bears/purple').expect(200, []);
     });

@@ -99,7 +99,7 @@ describe('BearsService', () => {
       };
       bears.createQueryBuilder.mockReturnValue(qb as never);
 
-      await expect(service.findByColor('brown')).resolves.toEqual(result);
+      await expect(service.findByColor('Brown')).resolves.toEqual(result);
       expect(qb.leftJoinAndSelect).toHaveBeenCalledWith('bear.colors', 'color');
       expect(qb.setParameter).toHaveBeenCalledWith('colorName', 'brown');
     });

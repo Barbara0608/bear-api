@@ -18,10 +18,10 @@ describe('Colors (e2e)', () => {
     return request(app.getHttpServer()).get('/colors').expect(200, []);
   });
 
-  it('POST /colors creates a color and trims its name', async () => {
+  it('POST /colors creates a color, trimming and lowercasing its name', async () => {
     const res = await request(app.getHttpServer())
       .post('/colors')
-      .send({ name: '  brown  ' })
+      .send({ name: '  Brown  ' })
       .expect(201);
 
     expect(res.body).toEqual({
@@ -47,6 +47,18 @@ describe('Colors (e2e)', () => {
     expect((res.body as { message: string }).message).toBe(
       'Color "brown" already exists',
     );
+  });
+
+  it('POST /colors returns 409 for the same name in a different case', async () => {
+    await request(app.getHttpServer())
+      .post('/colors')
+      .send({ name: 'brown' })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/colors')
+      .send({ name: 'BROWN' })
+      .expect(409);
   });
 
   it.each([
